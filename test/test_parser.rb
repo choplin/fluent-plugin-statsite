@@ -70,16 +70,6 @@ class StatsiteParserTest < Test::Unit::TestCase
     assert_equal expected, @res.pop
   end
 
-  def test_eachline_timers_count
-    line = 'timers.k.count|1|1405869579'
-    @parser.each_line(line)
-    expected = {
-      time: 1405869579,
-      record: { type: 'timers', key: 'k', value: 1, statistic: 'count' }
-    }
-    assert_equal expected, @res.pop
-  end
-
   def test_eachline_timers_histogram
     line = 'timers.k.histogram.bin_<0.00|0|1405869579'
     @parser.each_line(line)
