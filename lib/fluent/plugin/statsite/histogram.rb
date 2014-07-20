@@ -2,7 +2,6 @@ module Fluent
   module StatsitePlugin
     class Histogram
       FIELD = %w(
-        section
         min
         max
         width
@@ -16,12 +15,13 @@ module Fluent
         width
       )
 
-      def initialize(section, prefix, min, max, width)
-        @section = section
+      def initialize(prefix, min, max, width)
         @prefix = prefix
         @min = min
         @max = max
         @width = width
+
+        @section = prefix.nil? ? "default" : prefix
       end
 
       def to_ini
@@ -58,7 +58,7 @@ width=#{@width}
           end
         end
 
-        new(h['section'], h['prefix'], h['min'], h['max'], h['width'])
+        new(h['prefix'], h['min'], h['max'], h['width'])
       end
     end
   end
