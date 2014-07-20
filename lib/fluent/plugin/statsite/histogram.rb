@@ -47,7 +47,7 @@ width=#{@width}
 
         h.keys.each do |k|
           if not FIELD.member?(k) and not OPTIONAL_FIELD.member?(k)
-            raise ConfigError, "invalid histogramp hash key: #{k}"
+            raise ConfigError, "invalid histogram hash key: #{k}"
           end
         end
 
