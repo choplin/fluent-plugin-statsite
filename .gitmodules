@@ -1,0 +1,3 @@
+[submodule "vendor/statsite"]
+	path = vendor/statsite
+	url = https://github.com/armon/statsite
