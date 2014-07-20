@@ -6,7 +6,7 @@ This plugin calculates various useful metrics using [Statsite by armon](http://a
 
  You may think this as standard output plugin which just sends events to a daemon process, such as [mongodb plugin](https://github.com/fluent/fluent-plugin-mongo). It is true that this plugin is registered as output plugin, but this works as the so-called **Filter Plugin**, which means that this plugin sends matched events to Statsite process, recieves results aggregated by the Statsite, then re-emitting these results as events.
 
- Statsite process is launched as a child process from this plugin internally. Only you have to do place statsite the binary under $PATH, or set the path of statsite binary as parameter. Neither config files or daemon process is not required. Besides, the communication between the plugin and the Statsite process takes place through STDIN/STDOUT, so no network port will be used.
+ Statsite process is launched as a child process from this plugin internally. All you have to do place statsite the binary under $PATH, or set the path of statsite binary as parameter. Neither config files or daemon process is not required. Besides, the communication between the plugin and the Statsite process takes place through STDIN/STDOUT, so no network port will be used.
 
 ## Installation
 
