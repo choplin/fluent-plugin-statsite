@@ -93,8 +93,16 @@ It is strongly recommended to use '[V1 config format](http://docs.fluentd.org/ar
 
 ### Parameter
 
-|key|type|description|required|
-|---|---|---|---|
+key                     | type   | description | required | default
+---                     | ---    | ---         | ---      | ---
+tag                     | string |             | yes      |
+metrics                 | array  |             | yes      |
+histograms              | array  |             | no       | []
+statiste_path           | string |             | yes      | statsite
+statsite_flush_interval | time   |             | no       | 10s
+time_eps                | float  |             | no       | 0.01
+set_eps                 | float  |             | no       | 0.02
+child_respawn           | string |             | no       |
 
 ### Metrics Format
 
@@ -119,11 +127,11 @@ TODO
 ```
 ##### Fields
 
-|key|description|required|
-|---|---|---|
-|key||yes|
-|value_time||yes|
-|type||yes|
+key        | description | required
+---        | ---         | ---
+key        |             | yes
+value_time |             | yes
+type       |             | yes
 
 #### Variable substitution
 
@@ -141,13 +149,13 @@ TODO
 
 TODO
 
-|key|description|required|
-|---|---|---|
-|prefix||no|
-|request_time||yes|
-|min||yes|
-|max||yes|
-|width||yes|
+key          | description | required
+---          | ---         | ---
+prefix       |             | no
+request_time |             | yes
+min          |             | yes
+max          |             | yes
+width        |             | yes
 
 ## Copyright
 
