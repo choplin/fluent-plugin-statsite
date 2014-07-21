@@ -93,7 +93,7 @@ It is strongly recommended to use '[V1 config format](http://docs.fluentd.org/ar
 
 ### Parameter
 
-|key||type|description|required|
+|key|type|description|required|
 |---|---|---|---|
 
 ### Metrics Format
@@ -119,7 +119,7 @@ TODO
 ```
 ##### Fields
 
-|key||description|required|
+|key|description|required|
 |---|---|---|
 |key||yes|
 |value_time||yes|
@@ -141,7 +141,7 @@ TODO
 
 TODO
 
-|key||description|required|
+|key|description|required|
 |---|---|---|
 |prefix||no|
 |request_time||yes|
