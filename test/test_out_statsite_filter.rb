@@ -1,11 +1,11 @@
 require 'helper'
-require 'fluent/plugin/out_statsite'
+require 'fluent/plugin/out_statsite_filter'
 
-class Fluent::StatsiteOutput
+class Fluent::StatsiteFilterOutput
   attr_reader :respawns
 end
 
-class StatsiteOutputTest < Test::Unit::TestCase
+class StatsiteFilterOutputTest < Test::Unit::TestCase
   def setup
     Fluent::Test.setup
   end
@@ -33,7 +33,7 @@ class StatsiteOutputTest < Test::Unit::TestCase
   ]
 
   def create_driver(conf = CONFIG)
-    Fluent::Test::OutputTestDriver.new(Fluent::StatsiteOutput).configure(conf, true)
+    Fluent::Test::OutputTestDriver.new(Fluent::StatsiteFilterOutput).configure(conf, true)
   end
 
   def test_configure

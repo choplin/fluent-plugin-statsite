@@ -26,7 +26,7 @@ It is strongly recommended to use '[V1 config format](http://docs.fluentd.org/ar
 
 ```
 <match **>
-  type statsite
+  type statsite_filter
   tag statsite
   metrics [
     "${status}:1|c",

@@ -7,10 +7,10 @@ require 'tempfile'
 require 'timeout'
 
 module Fluent
-  class StatsiteOutput < Fluent::BufferedOutput
+  class StatsiteFilterOutput < Fluent::BufferedOutput
     include Fluent::StatsitePlugin
 
-    Fluent::Plugin.register_output('statsite', self)
+    Fluent::Plugin.register_output('statsite_filter', self)
 
     # TODO: should be configurable?
     CONFIG_VALIDATION_WAIT = 0.1
