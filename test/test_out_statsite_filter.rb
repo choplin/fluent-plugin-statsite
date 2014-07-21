@@ -17,7 +17,7 @@ class StatsiteFilterOutputTest < Test::Unit::TestCase
     type statsite
     tag statsite
     metrics [
-      "${status}:1|c"
+      "status_${status}:1|c"
     ]
     histograms [
       {"prefix": "k", "min": 0, "max": 10, "width": 1.0}
@@ -60,6 +60,6 @@ class StatsiteFilterOutputTest < Test::Unit::TestCase
 
     count_result = emits.pop
     assert_equal 'statsite', count_result[0]
-    assert_equal({type: 'counts', key: '${status}', value: 4.0}, count_result[2])
+    assert_equal({type: 'counts', key: 'status_200', value: 4.0}, count_result[2])
   end
 end

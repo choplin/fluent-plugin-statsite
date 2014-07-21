@@ -1,3 +1,5 @@
+require_relative 'metric_format'
+
 module Fluent
   module StatsitePlugin
     class Metric
@@ -9,9 +11,7 @@ module Fluent
         value
       )
 
-      FIELD = '\w+|\$\{\w+\}'
-
-      STRING_PATTERN = /^(#{FIELD}):(#{FIELD})\|(#{TYPE.join('|')})$/
+      STRING_PATTERN = /^(#{MetricFormat::PATTERN}):(#{MetricFormat::PATTERN})\|(#{TYPE.join('|')})$/
 
       def initialize(key, value, type)
         @key = key
@@ -20,15 +20,13 @@ module Fluent
       end
 
       def convert(record)
-        k = @key
-        v = @value
+        k = @key.convert(record)
+        v = @value.convert(record)
         (k.nil? or v.nil?) ? nil : "#{k}:#{v}|#{@type}\n"
       end
 
       def to_s
-        k = "key=#{@key}"
-        v = "value=#{@value}"
-        "Metric(#{k}, #{v}, type=#{@type})"
+        "Metric(#{@key}, #{@value}, type=#{@type})"
       end
 
       def self.validate(m)
@@ -54,13 +52,13 @@ module Fluent
             raise ConfigError, "metrics type must be one of the following: #{TYPE.join(' ')}, but specified as #{m['type']}"
           end
 
-          new(m['key'], m['value'], m['type'])
+          new(MetricFormat.validate(m['key']), MetricFormat.validate(m['value']), m['type'])
         when String
           if (STRING_PATTERN =~ m).nil?
             raise ConfigError, "metrics string must be #{STRING_PATTERN}, but specified as #{m}"
           end
 
-          new($1, $2, $3)
+          new(MetricFormat.validate($1), MetricFormat.validate($2), $3)
         end
       end
     end
