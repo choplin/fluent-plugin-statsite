@@ -1,5 +1,7 @@
 # Statsite Fluentd Plugin
 
+[![Build Status](https://travis-ci.org/choplin/fluent-plugin-statsite.svg?branch=master)](https://travis-ci.org/choplin/fluent-plugin-statsite)
+
 This plugin calculates various useful metrics using [Statsite by armon](http://armon.github.io/statsite/).
 
  [Statsite](http://armon.github.io/statsite/) is very cool software. Statsite works as daemon service, receiving events from tcp/udp, aggregating these events with specified methods, and sending the results via pluggable sinks. Statsite is written in C, cpu and memory efficient, and employ some approximate algorithms for unique sets and percentiles.
