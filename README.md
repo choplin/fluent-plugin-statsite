@@ -33,7 +33,7 @@ It is strongly recommended to use '[V1 config format](http://docs.fluentd.org/ar
     {"key": "request_time", "value_field": "request_time", "type": "ms"}
   ]
   histograms [
-    {"prefix": "request_time" "min": 0, "max": 1, "width": 0.1}
+    {"prefix": "request_time", "min": 0, "max": 1, "width": 0.1}
   ]
   statsite_path "statsite"
   statsite_flush_interval 1s
