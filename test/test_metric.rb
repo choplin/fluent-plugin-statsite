@@ -31,12 +31,6 @@ class MetricTest < Test::Unit::TestCase
     config = (valid_config)
     config.delete('key')
     assert_raises(Fluent::ConfigError) { Metric.validate(config) }
-
-    # invalidate key_field(deprecated)
-    config = (valid_config)
-    config.delete('key')
-    config['key_field'] = 'k'
-    assert_raises(Fluent::ConfigError) { Metric.validate(config) }
   end
 
   def test_validate_value
@@ -45,12 +39,6 @@ class MetricTest < Test::Unit::TestCase
 
     config = (valid_config)
     config.delete('value')
-    assert_raises(Fluent::ConfigError) { Metric.validate(config) }
-
-    # invalidate value_field(deprecated)
-    config = (valid_config)
-    config.delete('value')
-    config['value_field'] = 'v'
     assert_raises(Fluent::ConfigError) { Metric.validate(config) }
   end
 
@@ -61,6 +49,18 @@ class MetricTest < Test::Unit::TestCase
 
     config = (valid_config)
     config['type'] = 'foo'
+    assert_raises(Fluent::ConfigError) { Metric.validate(config) }
+  end
+
+  def test_validate_deprecated
+    config = valid_config
+    config.delete('value')
+    config['value_field'] = 'v'
+    assert_raises(Fluent::ConfigError) { Metric.validate(config) }
+
+    config = valid_config
+    config.delete('key')
+    config['key_field'] = 'k'
     assert_raises(Fluent::ConfigError) { Metric.validate(config) }
   end
 
