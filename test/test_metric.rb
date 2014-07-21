@@ -25,18 +25,12 @@ class MetricTest < Test::Unit::TestCase
   end
 
   def test_validate_key
-    config = (valid_config)['key_field'] = 'k'
-    assert_raises(Fluent::ConfigError) { Metric.validate(config) }
-
     config = (valid_config)
     config.delete('key')
     assert_raises(Fluent::ConfigError) { Metric.validate(config) }
   end
 
   def test_validate_value
-    config = (valid_config)['value_field'] = 'k'
-    assert_raises(Fluent::ConfigError) { Metric.validate(config) }
-
     config = (valid_config)
     config.delete('value')
     assert_raises(Fluent::ConfigError) { Metric.validate(config) }
