@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "fluent-plugin-statsite"
-  spec.version       = "0.0.2"
+  spec.version       = "0.0.3"
   spec.authors       = ["OKUNO Akihiro"]
   spec.email         = ["choplin.choplin@gmail.com"]
   spec.summary       = %q{Fluentd statsite plugin}
