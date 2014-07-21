@@ -30,7 +30,7 @@ It is strongly recommended to use '[V1 config format](http://docs.fluentd.org/ar
   tag statsite
   metrics [
     "${status}:1|c",
-    {"key": "request_time", "value_field": "request_time", "type": "ms"}
+    {"key": "request_time", "value": "request_time", "type": "ms"}
   ]
   histograms [
     {"prefix": "request_time", "min": 0, "max": 1, "width": 0.1}

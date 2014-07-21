@@ -4,7 +4,7 @@ require 'fluent/plugin/statsite/metric'
 include Fluent::StatsitePlugin
 
 class Metric
-  attr_reader :key, :key_field, :value, :value_field, :type
+  attr_reader :key, :value, :type
 end
 
 class MetricTest < Test::Unit::TestCase
@@ -31,6 +31,12 @@ class MetricTest < Test::Unit::TestCase
     config = (valid_config)
     config.delete('key')
     assert_raises(Fluent::ConfigError) { Metric.validate(config) }
+
+    # invalidate key_field(deprecated)
+    config = (valid_config)
+    config.delete('key')
+    config['key_field'] = 'k'
+    assert_raises(Fluent::ConfigError) { Metric.validate(config) }
   end
 
   def test_validate_value
@@ -39,6 +45,12 @@ class MetricTest < Test::Unit::TestCase
 
     config = (valid_config)
     config.delete('value')
+    assert_raises(Fluent::ConfigError) { Metric.validate(config) }
+
+    # invalidate value_field(deprecated)
+    config = (valid_config)
+    config.delete('value')
+    config['value_field'] = 'v'
     assert_raises(Fluent::ConfigError) { Metric.validate(config) }
   end
 
@@ -63,25 +75,19 @@ class MetricTest < Test::Unit::TestCase
   def test_validate_result
     m = Metric.validate(valid_config)
     assert_equal 'k', m.key
-    assert_nil m.key_field
     assert_equal 'v', m.value
-    assert_nil m.value_field
     assert_equal 'kv', m.type
   end
 
   def test_validate_result_string
     m = Metric.validate('k:v|kv')
     assert_equal 'k', m.key
-    assert_nil m.key_field
     assert_equal 'v', m.value
-    assert_nil m.value_field
     assert_equal 'kv', m.type
 
     m = Metric.validate('${k}:${v}|kv')
-    assert_nil m.key
-    assert_equal 'k', m.key_field
-    assert_nil m.value
-    assert_equal 'v', m.value_field
+    assert_equal '${k}', m.key
+    assert_equal '${v}', m.value
     assert_equal 'kv', m.type
   end
 
@@ -89,12 +95,12 @@ class MetricTest < Test::Unit::TestCase
     m = Metric.validate('${k}:${v}|kv')
 
     record = {'k' => 'key'}
-    assert_nil m.convert(record)
+    assert_equal "${k}:${v}|kv\n", m.convert(record)
 
     record = {'v' => 'value'}
-    assert_nil m.convert(record)
+    assert_equal "${k}:${v}|kv\n", m.convert(record)
 
     record = {'k' => 'key', 'v' => 'value'}
-    assert_equal "key:value|kv\n", m.convert(record)
+    assert_equal "${k}:${v}|kv\n", m.convert(record)
   end
 end

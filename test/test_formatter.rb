@@ -14,12 +14,12 @@ class StatsiteFormatterTest < Test::Unit::TestCase
 
   def test_call
     record = {'v' => 'value'}
-    assert_equal "", @formatter.call(record)
+    assert_equal "${k}:${v}|g\n${k}:v|g\n", @formatter.call(record)
 
     record = {'k' => 'key'}
-    assert_equal "key:v|g\n", @formatter.call(record)
+    assert_equal "${k}:${v}|g\n${k}:v|g\n", @formatter.call(record)
 
     record = {'k' => 'key', 'v' => 'value'}
-    assert_equal "key:value|g\nkey:v|g\n", @formatter.call(record)
+    assert_equal "${k}:${v}|g\n${k}:v|g\n", @formatter.call(record)
   end
 end

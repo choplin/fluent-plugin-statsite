@@ -6,33 +6,28 @@ module Fluent
       HASH_FIELD = %w(
         type
         key
-        key_field
         value
-        value_field
       )
 
       FIELD = '\w+|\$\{\w+\}'
 
       STRING_PATTERN = /^(#{FIELD}):(#{FIELD})\|(#{TYPE.join('|')})$/
-      STRING_EXAMPLE = "key_field:value_field|type"
 
-      def initialize(key, key_field, value, value_field, type)
+      def initialize(key, value, type)
         @key = key
-        @key_field = key_field
         @value = value
-        @value_field = value_field
         @type = type
       end
 
       def convert(record)
-        k = @key.nil? ? record[@key_field] : @key
-        v = @value.nil? ? record[@value_field] : @value
+        k = @key
+        v = @value
         (k.nil? or v.nil?) ? nil : "#{k}:#{v}|#{@type}\n"
       end
 
       def to_s
-        k = @key.nil? ? "key_field=#{@key_field}" :"key=#{@key}"
-        v = @value.nil? ? "value_field=#{@value_field}" :"value=#{@value}"
+        k = "key=#{@key}"
+        v = "value=#{@value}"
         "Metric(#{k}, #{v}, type=#{@type})"
       end
 
@@ -49,31 +44,23 @@ module Fluent
             end
           end
 
-          if not m.has_key?('key') ^ m.has_key?('key_field')
-              raise ConfigError, "metrics element must contain either one of 'key' or 'key_field'"
-          end
-
-          if not m.has_key?('value') ^ m.has_key?('value_field')
-              raise ConfigError, "metrics element must contain either one of 'value' or 'value_field'"
-          end
-
-          if not m.has_key?('type')
-              raise ConfigError, "metrics element must contain 'type'"
+          HASH_FIELD.each do |f|
+            if not m.has_key?(f)
+                raise ConfigError, "metrics element must contain '#{f}'"
+            end
           end
 
           if not TYPE.member?(m['type'])
             raise ConfigError, "metrics type must be one of the following: #{TYPE.join(' ')}, but specified as #{m['type']}"
           end
 
-          new(m['key'], m['value_field'], m['value'], m['value_field'], m['type'])
+          new(m['key'], m['value'], m['type'])
         when String
           if (STRING_PATTERN =~ m).nil?
             raise ConfigError, "metrics string must be #{STRING_PATTERN}, but specified as #{m}"
           end
 
-          key, key_field = $1.start_with?('$') ? [nil, $1[2..-2]] : [$1, nil]
-          value, value_field = $2.start_with?('$') ? [nil, $2[2..-2]] : [$2, nil]
-          new(key, key_field, value, value_field, $3)
+          new($1, $2, $3)
         end
       end
     end
