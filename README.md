@@ -43,11 +43,7 @@ and you set a fluentd config as,
   histograms [
     {"prefix": "request_time", "min": 0, "max": 1, "width": 0.1}
   ]
-  statsite_path "statsite"
   statsite_flush_interval 1s
-  timer_eps 0.01
-  set_eps 0.01
-  child_respawn 5
   flush_interval 1s
 </match>
 ```
@@ -55,20 +51,20 @@ and you set a fluentd config as,
 then you will get events such as below every specified seconds.
 
 ```json
-{"type":"counts","key":"status_500","value":1.0}
-{"type":"counts","key":"status_200","value":3.0}
-{"type":"counts","key":"status_302","value":1.0}
-{"type":"timers","key":"request_time","value":12.0,"statistic":"sum"}
-{"type":"timers","key":"request_time","value":40.0,"statistic":"sum_sq"}
-{"type":"timers","key":"request_time","value":2.4,"statistic":"mean"}
-{"type":"timers","key":"request_time","value":1.0,"statistic":"lower"}
-{"type":"timers","key":"request_time","value":5.0,"statistic":"upper"}
-{"type":"timers","key":"request_time","value":5,"statistic":"count"}
-{"type":"timers","key":"request_time","value":1.67332,"statistic":"stdev"}
-{"type":"timers","key":"request_time","value":2.0,"statistic":"median"}
-{"type":"timers","key":"request_time","value":5.0,"statistic":"p95"}
-{"type":"timers","key":"request_time","value":5.0,"statistic":"p99"}
-{"type":"timers","key":"request_time","value":12.0,"statistic":"rate"}
+statsite 1406124737 {"type":"counts","key":"status_500","value":1.0}
+statsite 1406124737 {"type":"counts","key":"status_200","value":3.0}
+statsite 1406124737 {"type":"counts","key":"status_302","value":1.0}
+statsite 1406124737 {"type":"timers","key":"request_time","value":12.0,"statistic":"sum"}
+statsite 1406124737 {"type":"timers","key":"request_time","value":40.0,"statistic":"sum_sq"}
+statsite 1406124737 {"type":"timers","key":"request_time","value":2.4,"statistic":"mean"}
+statsite 1406124737 {"type":"timers","key":"request_time","value":1.0,"statistic":"lower"}
+statsite 1406124737 {"type":"timers","key":"request_time","value":5.0,"statistic":"upper"}
+statsite 1406124737 {"type":"timers","key":"request_time","value":5,"statistic":"count"}
+statsite 1406124737 {"type":"timers","key":"request_time","value":1.67332,"statistic":"stdev"}
+statsite 1406124737 {"type":"timers","key":"request_time","value":2.0,"statistic":"median"}
+statsite 1406124737 {"type":"timers","key":"request_time","value":5.0,"statistic":"p95"}
+statsite 1406124737 {"type":"timers","key":"request_time","value":5.0,"statistic":"p99"}
+statsite 1406124737 {"type":"timers","key":"request_time","value":12.0,"statistic":"rate"}
 ```
 
 ## Prerequisite
@@ -89,73 +85,164 @@ Please refer to [Statsite official page](http://armon.github.io/statsite/).
 
 It is strongly recommended to use '[V1 config format](http://docs.fluentd.org/articles/config-file#v1-format)' because this plugin requires to set deeply nested parameters.
 
-### Example
-
 ### Parameter
 
-key                     | type   | description | required | default
----                     | ---    | ---         | ---      | ---
-tag                     | string |             | yes      |
-metrics                 | array  |             | yes      |
-histograms              | array  |             | no       | []
-statiste_path           | string |             | yes      | statsite
-statsite_flush_interval | time   |             | no       | 10s
-time_eps                | float  |             | no       | 0.01
-set_eps                 | float  |             | no       | 0.02
-child_respawn           | string |             | no       |
+key                     | type   | description                                                                                | required | default
+---                     | ---    | ---                                                                                        | ---      | ---
+tag                     | string | The tag of output events.                                                                  | yes      |
+metrics                 | array  | How to retrive statsite messages from fluentd event. see the details below.                | yes      |
+histograms              | array  | THe statstie histogram settings. see the details below.                                    | no       | []
+statiste_path           | string | The path of statsite command. Leave this blank if statsite places under $PATH.             | yes      | statsite
+statsite_flush_interval | time   | The interval at which statsite flush aggregated results.                                   | no       | 10s
+time_eps                | float  | The upper bound on error for timer estimates. Please refer to statsite official page.      | no       | 0.01
+set_eps                 | float  | The upper bound on error for unique set estimates. Please refer to statsite official page. | no       | 0.02
+child_respawn           | string | How many times statsite will be respawned in case of unexpected exit.                      | no       |
 
-### Metrics Format
+### Metrics
 
-You can specify metrics in two format, string style, and hash style.
+Metrics parameter specifies how to form messages to send to statsite from each fluentd event.
 
-#### String style
+Top level of **metrics* parameter must be an array which contains strings or hashes. If you set multliple elements in an array, equivalent number of messages will be sent to statsite for one fluentd event.
+
+For example, given this metrics setting,
+
+```
+metrics [
+    {"key": "key_1", "value": "1", "type": "s"}
+    {"key": "key_2", "value": "1", "type": "s"}
+]
+```
+
+and this fluentd event is comming,
+
+```
+{"foo": "f", "bar": "b", "hoge": "h"}
+```
+
+then the events below will be sent to statsite
+
+```
+key_1:1|c
+key_2:1|c
+```
+
+Every element of the array must foloow the one of these format, the string format, and the hash format. Both they have the same fields semantically. See the details of these formats below.
+
+#### Fields
+
+key        | type   | description            | required
+---        | ---    | ---                    | ---
+key        | string | message key            | yes
+value_time | string | message value          | yes
+type       | enum   | statsite message type. | yes
+
+With these settings, A message sent to statsite is "${key}:${value}|${type}\n"
+
+You should also see [Statsite official page](http://armon.github.io/statsite/) to see the statsite supports in detail.
+
+#### String format
+
+String format almost the same as Statsite's event protocol, though this format supports variable substitution in key and value field, which is described in detail below.
 
 ##### Example
 
 ```
-"status_${status}:1|c"
+metrics [
+    "status_${status}:1|c"
+]
 ```
 
-TODO
+#### Hash format
 
-#### Hash style
+Hash format is expressed as JSON Object.
 
 ##### Example
 
 ```json
-{"key": "status_${status}", "value": "1", "type": "c"}
+metrics [
+    {"key": "status_${status}", "value": "1", "type": "c"}
+]
 ```
-##### Fields
 
-key        | description | required
----        | ---         | ---
-key        |             | yes
-value_time |             | yes
-type       |             | yes
+#### Message Type
+
+Please refer to [Statsite official page](http://armon.github.io/statsite/).
+
+type | description
+---  | ---
+kv   | Simple Key/Value.
+g    | Gauge, similar to kv but only the last value per key is retained
+ms   | Timer.
+h    | Alias for timer
+c    | Counter.
+s    | Unique Set
 
 #### Variable substitution
 
-*TODO*
+Both in string and hash format, key and value field support substitution of variable.
 
-### Histograms Format
+When the string "${*subst_key*}" exists key or value field, this will be replaces with the corresponding value in the fluentd event.
+
+For example, given this metrics setting,
+
+```
+metrics [
+    {"key": "key_${foo}_${bar}", "value": "${hoge}", "type": "c"}
+]
+```
+
+and this fluentd event is comming,
+
+```
+{"foo": "f", "bar": "b", "hoge": "1"}
+```
+
+then the events below will be sent to statsite
+
+```
+key_f_b:1|s
+```
+
+When any one of the substitution key does not exists in the fluentd event, no messages will be sent to statsite for that metric element.
+
+For example, given this metrics setting,
+
+```
+metrics [
+    {"key": "key_${foo}", "value": "1", "type": "c"},
+    {"key": "key_${bar}", "value": "1", "type": "c"}
+]
+```
+
+and this fluentd event is comming,
+
+```
+{"foo": "f"}
+
+then the events below will be sent to statsite
+
+```
+key_f:1|c
+```
+
+### Histograms
 
 #### Example
 
 ```json
-{"prefix": "request_time", "min": 0, "max": 1, "width": 0.1}
+histogram [
+    {"prefix": "request_time", "min": 0, "max": 1, "width": 0.1}
+]
 ```
 
 #### Fields
 
-TODO
-
-key          | description | required
----          | ---         | ---
-prefix       |             | no
-request_time |             | yes
-min          |             | yes
-max          |             | yes
-width        |             | yes
+key    | type   | description                                                                        | required
+---    | ---    | ---                                                                                | ---
+prefix | string | This is the key prefix to match on. This is also used as a suffix of section name. | no
+min    | float  | The minimum bound on the histogram.                                                | yes
+max    | float  | The maximum bound on the histogram.                                                | yes
+width  | float  | The width of each bucket between the min and max.                                  | yes
 
 ## Copyright
 
