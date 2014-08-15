@@ -1,5 +1,6 @@
 require_relative 'statsite/child_process'
-require_relative 'statsite/format'
+require_relative 'statsite/formatter'
+require_relative 'statsite/parser'
 require_relative 'statsite/metric'
 require_relative 'statsite/histogram'
 

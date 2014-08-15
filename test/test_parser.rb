@@ -1,5 +1,5 @@
 require 'helper'
-require 'fluent/plugin/statsite/format'
+require 'fluent/plugin/statsite/parser'
 
 include Fluent::StatsitePlugin
 
