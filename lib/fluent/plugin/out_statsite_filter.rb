@@ -20,6 +20,7 @@ module Fluent
     config_param :histograms,              :array,    :default => []
     config_param :statsite_path,           :string,   :default => 'statsite'
     config_param :statsite_flush_interval, :time,     :default => 10
+    config_param :stream_cmd,              :string,   :default => 'cat'
     config_param :timer_eps,               :float,    :default => 0.01
     config_param :set_eps,                 :float,    :default => 0.02
     config_param :child_respawn,           :string,   :default => nil
@@ -143,7 +144,7 @@ log_level = INFO
 flush_interval = #{@statsite_flush_interval}
 timer_eps = #{@timer_eps}
 set_eps = #{@set_eps}
-stream_cmd = cat
+stream_cmd = #{@stream_cmd}
 
 #{@histograms.map(&:to_ini).join("\n\n")}
       CONFIG

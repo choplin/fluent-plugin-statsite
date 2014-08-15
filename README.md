@@ -87,16 +87,17 @@ It is strongly recommended to use '[V1 config format](http://docs.fluentd.org/ar
 
 ### Parameter
 
-key                     | type   | description                                                                                | required | default
----                     | ---    | ---                                                                                        | ---      | ---
-tag                     | string | The tag of output events.                                                                  | yes      |
-metrics                 | array  | How to retrive statsite messages from fluentd event. see the details below.                | yes      |
-histograms              | array  | THe statstie histogram settings. see the details below.                                    | no       | []
-statiste_path           | string | The path of statsite command. Leave this blank if statsite places under $PATH.             | yes      | statsite
-statsite_flush_interval | time   | The interval at which statsite flush aggregated results.                                   | no       | 10s
-time_eps                | float  | The upper bound on error for timer estimates. Please refer to statsite official page.      | no       | 0.01
-set_eps                 | float  | The upper bound on error for unique set estimates. Please refer to statsite official page. | no       | 0.02
-child_respawn           | string | How many times statsite will be respawned in case of unexpected exit.                      | no       |
+key                     | type   | description                                                                                                                                                                                      | required | default
+---                     | ---    | ---                                                                                                                                                                                              | ---      | ---
+tag                     | string | The tag of output events.                                                                                                                                                                        | yes      |
+metrics                 | array  | How to retrive statsite messages from fluentd event. see the details below.                                                                                                                      | yes      |
+histograms              | array  | THe statstie histogram settings. see the details below.                                                                                                                                          | no       | []
+statiste_path           | string | The path of statsite command. Leave this blank if statsite places under $PATH.                                                                                                                   | yes      | statsite
+statsite_flush_interval | time   | The interval at which statsite flush aggregated results.                                                                                                                                         | no       | 10s
+stream_cmd              | string | This is the command that statsite invokes every flush_interval seconds to handle the metrics. It can be any executable. It should read inputs over stdin and exit with status code 0 on success. | no       | cat
+time_eps                | float  | The upper bound on error for timer estimates. Please refer to statsite official page.                                                                                                            | no       | 0.01
+set_eps                 | float  | The upper bound on error for unique set estimates. Please refer to statsite official page.                                                                                                       | no       | 0.02
+child_respawn           | string | How many times statsite will be respawned in case of unexpected exit.                                                                                                                            | no       |
 
 ### Metrics
 
