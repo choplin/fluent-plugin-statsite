@@ -9,8 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["choplin.choplin@gmail.com"]
   spec.summary       = %q{Fluentd statsite plugin}
   spec.description   = %q{Fluentd plugin which caluculate statistics using statsite}
-  spec.homepage      = ""
-  spec.homepage         = "https://github.com/choplin/fluent-plugin-statsite"
+  spec.homepage      = "https://github.com/choplin/fluent-plugin-statsite"
   spec.license       = "Apache-2.0"
 
   spec.files         = `git ls-files -z`.split("\x0")
